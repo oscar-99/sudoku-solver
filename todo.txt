@@ -1,0 +1,3 @@
+- move the get missing numbers over to sudoku
+- git the project
+- Implement a more sophisicated strategy
