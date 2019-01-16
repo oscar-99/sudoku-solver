@@ -108,14 +108,14 @@ class SudokuBoard(object):
         return True
 
     
-    def check_solution(self):
+    def check_board(self):
         """
-        Check a solution.
+        This method wil move through a board checking all rows, columns and square to be valid (i.e. not having more that two occurances). Returns False if an invalid row, column or square is found. True otherwise. 
         """
         # Check rows
         for i in range(9):
             for num in range(1, 10):
-                if num not in self.board[i]:
+                if self.board[i].tolist().count(num) > 1:
                     return False
 
         # Check columns
@@ -123,9 +123,9 @@ class SudokuBoard(object):
             column = []
             for j in range(9):
                 column.append(self.board[j][i])
-
+           
             for num in range(1, 10):
-                if num not in column:
+                if column.count(num) > 1:
                     return False
         
         squares = self.get_sub_squares()
@@ -134,10 +134,11 @@ class SudokuBoard(object):
             square = squares[i]
             square = square.flatten().tolist()
             for num in range(1, 10):
-                if num not in square:
+                if square.count(num) > 1:
                     return False
 
         return True
+
 
     def get_top_sum(self):
         """ Method for project euler. Gets top three numbers. """
@@ -146,6 +147,54 @@ class SudokuBoard(object):
             num += str(int(self.board[0][i]))
 
         return int(num)
+
+
+    def get_row_numbers(self, row):
+        """
+        Method for getting missing numbers along a row.
+
+        Parameters:
+            row (int): The row to get missing numbers from.
+
+        Returns:
+            (list): List of numbers missing. 
+        """
+        return [i for i in range(1,10) if i not in self.board[row]]
+
+
+    def get_column_numbers(self, column):
+        """
+        Method for getting missing numbers along a column.
+
+        Parameters:
+            column (int): The column to get missing numbers from.
+
+        Returns:
+            (list): List of numbers missing. 
+        """
+        column_list = []
+        for i in range(9):
+            column_list.append(self.board[i][column])
+
+        return [i for i in range(1,10) if i not in column_list]
+
+
+    def get_square_numbers(self, square):
+        """
+        Method for getting missing numbers in a 3x3 square in following number scheme:
+            1 2 3
+            4 5 6
+            7 8 9
+
+        Parameters:
+            square (int): The square to get missing numbers from.
+
+        Returns:
+            (list): List of missing numbers 
+        """
+        square = self.board.get_sub_squares()[square]
+        square = square.flatten().tolist()
+        return [i for i in range(1, 10) if i not in square]
 
         
 

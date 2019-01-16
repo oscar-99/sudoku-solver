@@ -1,3 +1,5 @@
 - move the get missing numbers over to sudoku
 - git the project
 - Implement a more sophisicated strategy
+    - We do logical method possibilities 
+    - We need a branching method that can deal with possibilities.
