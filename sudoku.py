@@ -66,6 +66,18 @@ class SudokuBoard(object):
 
         return False
 
+    
+    def set_board(self, move_number):
+        """
+        A method that sets the current board to the move number.
+
+        Parameters:
+            move_number (int): The move number to be changed to.
+        """
+        self.move_count = move_number
+        self.board = self.board_history[move_number]
+        
+
 
     def clear(self):
         """ Clears the game and restores original board. """
@@ -192,7 +204,7 @@ class SudokuBoard(object):
         Returns:
             (list): List of missing numbers 
         """
-        square = self.board.get_sub_squares()[square]
+        square = self.get_sub_squares()[square]
         square = square.flatten().tolist()
         return [i for i in range(1, 10) if i not in square]
 
