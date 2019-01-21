@@ -139,6 +139,7 @@ class StrategyMk2(object):
                     self.find_prev_point(last_point)
 
             if print_result:
+                print(self.game.puzzle_number)
                 print(self.game.board)
 
 
@@ -181,18 +182,35 @@ class StrategyMk3(object):
         """
         Aim of this method is to fill in directly solvable squares.
         """
-        # Track if a directly solvable square is found 
-        found = False
-
         for i in range(9):
             for j in range(9):
                 if len(self.solution_matrix[i][j]) == 1:
                     self.game.add_cell((i,j), self.solution_matrix[i][j][0])
-                    found = True
+                    return True
 
-        return found
+        return False
 
-    
+        
+    def solve(self, print_board=False):
+        """
+        The solving algorithm for mk3 strategy.
+        """
+
+        while not (self.game.check_board_full() and self.game.check_board()):
+            if self.game.check_board():
+                # This solves directly solvable squares
+                self.search_grid()
+                if self.logic_fill():
+                    continue
+
+                
+            else:
+                # We need to handle incorrect guessing.
+
+            if print_board:
+                print(self.game.board)
+
+
 
 
                                       

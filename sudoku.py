@@ -29,6 +29,7 @@ class SudokuBoard(object):
             coord (tuple): The coordinate of the cell.
             num (int): The new value.
         """
+        self.clear_history()
         if (self.board[coord[0], coord[1]] == 0 and 
         self.original_board[coord[0], coord[1]] == 0):
             # Create new board and move into board history.
@@ -55,6 +56,7 @@ class SudokuBoard(object):
             coord (tuple): The coordinate of the cell.
         """
         # Check if cell selected is not original cell and has a number
+        self.clear_history()
         if (self.board[coord[0], coord[1]] != 0 and 
         self.original_board[coord[0], coord[1]] == 0):
             self.move_count +=1
@@ -66,6 +68,14 @@ class SudokuBoard(object):
 
         return False
 
+
+    def clear_history(self):
+        """
+        Clear the history of the board once board is large i.e. >100
+        """
+        if len(self.board) >= 0:
+            self.board_history.pop(0)
+    
     
     def set_board(self, move_number):
         """
@@ -77,7 +87,6 @@ class SudokuBoard(object):
         self.move_count = move_number
         self.board = self.board_history[move_number]
         
-
 
     def clear(self):
         """ Clears the game and restores original board. """
