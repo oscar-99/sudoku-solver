@@ -151,7 +151,7 @@ class StrategyMk3(object):
     def __init__(self, game):
         self.game = game
         self.solution_matrix = []
-        # The guess matrix will contain elimated possibilities in same format as solution matrix
+        # The guess matrix will contain unknown values for the last certain board. i.e. a board with no guesses
         self.guess_matrix = []
         # The guess list tracks where guesses have been made.
         self.guess_list = []
@@ -190,6 +190,25 @@ class StrategyMk3(object):
 
         return False
 
+
+    def generate_guess_matrix(self):
+        """
+        Method for generation of possibilities from the last certain position.
+        """
+        self.guess_matrix = []
+        for i in range(9):
+            guess_row = []
+            for j in range(9):
+                self.search_grid()
+                possibility_list = self.solution_matrix[i][j]
+                if len(possibility_list) > 1:
+                    guess_row.append(possibility_list)
+                else:
+                    guess_row.append([])
+
+            self.guess_matrix.append(guess_row)
+    
+
         
     def solve(self, print_board=False):
         """
@@ -200,12 +219,19 @@ class StrategyMk3(object):
             if self.game.check_board():
                 # This solves directly solvable squares
                 self.search_grid()
-                if self.logic_fill():
-                    continue
+                if not self.logic_fill():
+                    # Deal with if not fully logically filled
+                    # Run guess
+                    pass
 
+            # Update guess matrix. 
+            if len(self.guess_list) == 0:
+                self.generate_guess_matrix()
+                
                 
             else:
                 # We need to handle incorrect guessing.
+                pass
 
             if print_board:
                 print(self.game.board)
