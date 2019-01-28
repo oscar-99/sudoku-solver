@@ -56,7 +56,7 @@ class SudokuBoard(object):
             coord (tuple): The coordinate of the cell.
         """
         # Check if cell selected is not original cell and has a number
-        self.clear_history()
+        
         if (self.board[coord[0], coord[1]] != 0 and 
         self.original_board[coord[0], coord[1]] == 0):
             self.move_count +=1
@@ -64,29 +64,47 @@ class SudokuBoard(object):
             new_board[coord[0], coord[1]] = 0
             self.board_history.insert(self.move_count, new_board)
             self.board = new_board
+            self.clear_history()
             return True
 
+        self.clear_history()
         return False
+
+    def erase_ahead_coord(self, coord):
+        """
+        Method which deletes all previously entered points ahead of and including the coord.
+
+        Parameters:
+            coord (tuple): The coordinate of the cell.
+        """
+        # In first deletion row only remove past the column number
+        for k in range(coord[1], 9):
+            if self.original_board[coord[0]][k] == 0:
+                self.remove_cell((coord[0], k))
+
+        # Past the specific row delete all
+        for i in range(coord[0]+1, 9):
+            for j in range(9):
+                if self.original_board[i][j] == 0:
+                    self.remove_cell((i,j))
+
+    
+    def set_board(self, board):
+        """
+        Method which sets the current board to an input board.
+        """
+        self.board_history.append(board)
+        self.board = board
+        self.clear_history()
 
 
     def clear_history(self):
         """
         Clear the history of the board once board is large i.e. >100
         """
-        if len(self.board) >= 0:
+        if len(self.board_history) >= 100:
             self.board_history.pop(0)
-    
-    
-    def set_board(self, move_number):
-        """
-        A method that sets the current board to the move number.
-
-        Parameters:
-            move_number (int): The move number to be changed to.
-        """
-        self.move_count = move_number
-        self.board = self.board_history[move_number]
-        
+                    
 
     def clear(self):
         """ Clears the game and restores original board. """

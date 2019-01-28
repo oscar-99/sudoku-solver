@@ -1,4 +1,9 @@
 # To do
-- Need to speed up brute force algorithm
-  - Mix with logic algorithm.
+
+- Timing
+- Implement the mk4 strategy.
 - Fix UI and translate over to js
+
+# Problems
+- Slow on puzzle 31
+

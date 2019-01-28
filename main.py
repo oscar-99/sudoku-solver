@@ -6,12 +6,14 @@ import utilities
 
 sum = 0
 
-puzzle_number = 1
-board = utilities.generate_puzzle_matrix(puzzle_number)
-game = SudokuBoard(board, puzzle_number)
-strat = StrategyMk3(game)
-print(game.original_board)
-strat.solve(print_board=True)
-sum += strat.game.get_top_sum()
+for i in range(1,51):
+    puzzle_number = i
+    board = utilities.generate_puzzle_matrix(puzzle_number)
+    game = SudokuBoard(board, puzzle_number)
+    strat = StrategyMk3(game)
+    print(game.original_board)
+    strat.solve(print_board=True)
+
+    sum += strat.game.get_top_sum()
 
 print(sum)

@@ -151,13 +151,28 @@ class StrategyMk3(object):
     def __init__(self, game):
         self.game = game
         self.solution_matrix = []
+
         # The guess matrix will contain unknown values for the last certain board. i.e. a board with no guesses
         self.guess_matrix = []
+        for _ in range(9):
+            row = []
+            for __ in range(9):
+                row.append([])
+            self.guess_matrix.append(row)
+
+        
         # The guess list tracks where guesses have been made.
         self.guess_list = []
+        # Define a check matrix which tracks values that have been checked.
+        self.check_matrix = []
+        for _ in range(9):
+            row = []
+            for __ in range(9): 
+                row.append([])
+            self.check_matrix.append(row)
+ 
 
-
-
+        
     def search_grid(self):
         """
         Method that searches the grid by square, by row and then by column to find potential entries. 
@@ -170,11 +185,19 @@ class StrategyMk3(object):
             row_missing = self.game.get_row_numbers(i)
             for j in range(9):
                 if self.game.board[i][j] == 0:
+                    # Generate the missing numbers and list of checked guesses.
                     column_missing = self.game.get_column_numbers(j)
-                    square_missing = self.game.get_square_numbers(utilities.coords_to_square(i,j))
-                    position_missing = [i for i in range(1, 10) if i in row_missing and i in column_missing and i in square_missing]
+                    square = utilities.coords_to_square(i,j)
+                    square_missing = self.game.get_square_numbers(square)
+                    checked = self.check_matrix[i][j]
+                    
+                    # Find possible numbers.
+                    position_missing = [i for i in range(1, 10) if (i in row_missing and i in column_missing and i in square_missing and i not in checked)]
                     solution_row.append(position_missing)
-                else: solution_row.append([])
+
+                else: 
+                    solution_row.append([])
+
             self.solution_matrix.append(solution_row)
 
     
@@ -209,6 +232,45 @@ class StrategyMk3(object):
             self.guess_matrix.append(guess_row)
     
 
+    def guess(self):
+        """
+        Method for implementing a guess. 
+        """
+        for i in range(9):
+            for j in range(9):
+                if self.game.board[i][j] == 0:
+                    possibilities = self.guess_matrix[i][j]
+                    self.guess_list.append(Guess((i,j), possibilities, self.game.board))
+                    return True
+
+        return False
+
+    
+    def backtrack(self):
+        """
+        Method to handle the backtrack algorithm. Method will backtrack (deleting bad results) to last guess and increment or further backtrack until an increment is found.
+        """
+
+        while True:
+            # Set the last guess to the last guess and set the board to the state at that board.
+            last_guess = self.guess_list[-1]
+            self.game.set_board(last_guess.board)
+
+            # If length is one 
+            if len(self.guess_list) == 1:
+                self.check_matrix[last_guess.coord[0]][last_guess.coord[1]].append(last_guess.value)
+                last_guess.next_possibility()
+                return
+
+            if last_guess.next_possibility():
+                # If there is another possibility for guess we are done, update the board
+                self.game.add_cell(last_guess.coord, last_guess.value)
+                return
+
+            else: 
+                # If there is no next possibility remove last guess from list of guesses.
+                self.guess_list.pop(-1)
+
         
     def solve(self, print_board=False):
         """
@@ -216,28 +278,56 @@ class StrategyMk3(object):
         """
 
         while not (self.game.check_board_full() and self.game.check_board()):
+            # Update guess matrix. 
+            if len(self.guess_list) == 0:
+                self.generate_guess_matrix()
+
             if self.game.check_board():
                 # This solves directly solvable squares
                 self.search_grid()
                 if not self.logic_fill():
                     # Deal with if not fully logically filled
                     # Run guess
-                    pass
-
-            # Update guess matrix. 
-            if len(self.guess_list) == 0:
-                self.generate_guess_matrix()
-                
-                
-            else:
-                # We need to handle incorrect guessing.
-                pass
-
+                    if self.guess():
+                        self.game.add_cell(self.guess_list[-1].coord, self.guess_list[-1].value)
+                          
+            if not self.game.check_board():
+                self.backtrack()
+                    
             if print_board:
+                print(self.game.puzzle_number)
                 print(self.game.board)
 
 
+class Guess(object):
+    """
+    An object to model a guess.
+    """
+    def __init__(self, coord, possibilities, board):
+        """
+        Parameters:
+            coord (tuple): Coord is tuple corresponding to coordinate.
+            possibilities (list): The possible values for the guess.
+            board (np.array): The board before guess was made.
+        """
+        self.coord = coord
+        self.possibilities = possibilities
+        self.index = 0
+        self.value = self.possibilities[self.index]
+        self.board = board
 
+    def next_possibility(self):
+        """
+        Method which advances the guess.
+        """
+        self.index += 1
+        try:
+             self.value = self.possibilities[self.index]
+             return True
+
+        except IndexError:
+            return False
+        
 
                                       
 

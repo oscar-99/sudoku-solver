@@ -54,7 +54,7 @@ def generate_puzzle_matrix(n):
             n = "0" + str(n)
         else:
             n = str(n)
-    return np.genfromtxt(os.path.join("puzzles","puzzle"+n),delimiter=",")
+    return np.genfromtxt(os.path.join("Sudoku Solver","puzzles","puzzle"+n),delimiter=",")
 
 
 def coords_to_square(row, column):
