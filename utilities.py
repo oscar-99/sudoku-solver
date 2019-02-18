@@ -15,13 +15,13 @@ def puzzle_import(n):
     else:
         n = str(n)
 
-    with open(OPEN_PATH, "r") as sudoko_puzzles:
-        sudoko_puzzles_read = sudoko_puzzles.read()
-        sudoko_puzzles_list = sudoko_puzzles_read.split("Grid")
+    with open(OPEN_PATH, "r") as sudoku_puzzles:
+        sudoku_puzzles_read = sudoku_puzzles.read()
+        sudoku_puzzles_list = sudoku_puzzles_read.split("Grid")
         selected_puzzle_str = None
 
         # Select puzzle.
-        for puzzle_str in sudoko_puzzles_list:
+        for puzzle_str in sudoku_puzzles_list:
             if puzzle_str[1:3] == n:
                 selected_puzzle_str = puzzle_str
         
@@ -54,7 +54,7 @@ def generate_puzzle_matrix(n):
             n = "0" + str(n)
         else:
             n = str(n)
-    return np.genfromtxt(os.path.join("Sudoku Solver","puzzles","puzzle"+n),delimiter=",")
+    return np.genfromtxt(os.path.join("puzzles","puzzle"+n),delimiter=",")
 
 
 def coords_to_square(row, column):
@@ -77,6 +77,3 @@ def coords_to_square(row, column):
         return subsquare_column + 3
     else:
         return subsquare_column + 6
-
-    
-
